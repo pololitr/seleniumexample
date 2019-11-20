@@ -27,10 +27,10 @@ public class AppTest {
 
     @Before
     public void init() {
-        // System.setProperty("webdriver.chrome.driver", "src/test/resources/drivers/chromedriver.exe");
+         System.setProperty("webdriver.chrome.driver", "src/test/resources/drivers/chromedriver.exe");
 //        ChromeDriverService service = new ChromeDriverService()
         ChromeOptions cho = new ChromeOptions();
-        cho.addArguments("headless");
+        //cho.addArguments("headless");
         driver = new ChromeDriver(cho);
 //        driver.manage().window().maximize();
     }
@@ -47,6 +47,20 @@ public class AppTest {
         searchInput.sendKeys("travis");
         searchInput.sendKeys(Keys.ENTER);
         Assert.assertTrue(driver.getTitle().startsWith("travis - "));
+        driver.quit();
+    }
+
+    @Test
+    public void alzaTest() throws InterruptedException {
+        driver.get("https://www.alza.cz/");
+        WebElement searchInput = driver.findElement(By.cssSelector("#edtSearch"));
+        searchInput.sendKeys("ubiquiti unifi");
+
+        WebDriverWait wait = new WebDriverWait(driver, 1);
+        wait.until(ExpectedConditions.presenceOfElementLocated( By.cssSelector("#ui-id-1>li.t7") ));
+
+        List<WebElement> searchItems = driver.findElements(By.cssSelector("#ui-id-1>li.t3"));
+        Assert.assertEquals(3, searchItems.size());
         driver.quit();
     }
 
