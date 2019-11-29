@@ -27,7 +27,7 @@ public class AppTest {
 
     @Before
     public void init() {
-         System.setProperty("webdriver.chrome.driver", "src/test/resources/drivers/chromedriver.exe");
+         //System.setProperty("webdriver.chrome.driver", "src/test/resources/drivers/chromedriver.exe");
 //        ChromeDriverService service = new ChromeDriverService()
         ChromeOptions cho = new ChromeOptions();
         //cho.addArguments("headless");
