@@ -8,12 +8,11 @@ before_install:
   # - chmod 777 ./src/test/resources/drivers/chromedriver.exe
   # - chmod 777 ./target/test-classes/drivers/chromedriver.exe
   - wget https://chromedriver.storage.googleapis.com/2.41/chromedriver_linux64.zip
-  #- wget https://chromedriver.storage.googleapis.com/79.0.3945.16/chromedriver_linux64.zip
   # https://chromedriver.storage.googleapis.com/79.0.3945.16/chromedriver_linux64.zip
   - unzip chromedriver_linux64.zip
-  # - chmod 777 /home/travis/build/pavelgloss/seleniumexample/chromedriver
+  #- chmod 777 /home/travis/build/pavelgloss/seleniumexample/chromedriver
   - "ls -la"
-  # - wget https://selenium-release.storage.googleapis.com/3.13/selenium-server-standalone-3.13.0.jar
+  - wget https://selenium-release.storage.googleapis.com/3.13/selenium-server-standalone-3.13.0.jar
   # start your web application and listen on `localhost`
   - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
   #  - xvfb-run java -Dwebdriver.chrome.driver=/home/travis/build/pavelgloss/seleniumexample/chromedriver -jar selenium-server-standalone-3.13.0.jar
