@@ -29,13 +29,13 @@ public class AppTest {
     public void init() {
         ChromeOptions cho = new ChromeOptions();
 
-        boolean runOnTravis = true;
+        boolean runOnTravis = false;
         if (runOnTravis) {
             cho.addArguments("headless");
         } else {
             System.setProperty("webdriver.chrome.driver", "src/test/resources/drivers/chromedriver.exe");
         }
-//        ChromeDriverService service = new ChromeDriverService()
+        //ChromeDriverService service = new ChromeDriverService();
         driver = new ChromeDriver(cho);
 //        driver.manage().window().maximize();
     }
