@@ -86,7 +86,7 @@ public class testCreateProject {
         //Project Name
 
         WebElement projectName = driver.findElement(By.xpath("//input[@name=\"fields[158]\"]"));
-        projectName.sendKeys("chms00-"+ randomUUIDString);
+        projectName.sendKeys("chms00-project-"+ randomUUIDString);
 
         //Project start date
         WebElement projectDate = driver.findElement(By.xpath("//button[@class=\"btn btn-default date-set\"]"));
