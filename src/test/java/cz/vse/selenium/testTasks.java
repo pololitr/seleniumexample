@@ -50,14 +50,17 @@ public class testTasks {
     }
 
     @After
-    public void tearDown() {
-        // driver.close();
+    public void tearDown() throws InterruptedException {
+//        Thread.sleep(10000);
+//        driver.close();
     }
 
     @Test
     public void createTaskSimplePositive() {
         // given
         driver.get("https://digitalnizena.cz/rukovoditel/");
+
+        String taskNameUUID = "chms00-task-"+ randomUUIDString;
 
         // when
         WebElement usernameInput = driver.findElement(By.name("username"));
@@ -72,8 +75,11 @@ public class testTasks {
         sidebarProjects.click();
 
         //search chms00 project
-        WebElement searchTasks = driver.findElement(By.id("entity_items_listing66_21_search_keywords"));
-        searchTasks.sendKeys("");
+        WebElement searchProjects = driver.findElement(By.id("entity_items_listing66_21_search_keywords"));
+        searchProjects.clear();
+        searchProjects.sendKeys("chms00");
+        WebElement searchButton = driver.findElement(By.xpath("//button[@title=\"Search\" and @class=\"btn btn-info\"]"));
+        searchButton.click();
 
         //Pick found project
         WebDriverWait wait1 = new WebDriverWait(driver, 5);
@@ -92,9 +98,9 @@ public class testTasks {
         type.selectByVisibleText("Task");
         type.selectByValue("42");
 
-        //Project Name
+        //Task Name
         WebElement taskName = driver.findElement(By.xpath("//input[@name=\"fields[168]\"]"));
-        taskName.sendKeys("chms00-task-"+ randomUUIDString);
+        taskName.sendKeys(taskNameUUID);
 
         //Task status 46-52
         Select taskStatus = new Select(driver.findElement(By.xpath("//select[@name=\"fields[169]\"]")));
@@ -113,8 +119,46 @@ public class testTasks {
         taskDescription.sendKeys("DRY");
         driver.switchTo().defaultContent();
 
+        //Task submit
         WebElement projectSubmit = driver.findElement(By.xpath("//button[@type=\"submit\" and @class=\"btn btn-primary btn-primary-modal-action\"]"));
         projectSubmit.click();
+
+        //Task search new
+        WebElement searchTasks = driver.findElement(By.id("entity_items_listing944_22_search_keywords"));
+        searchTasks.clear();
+        searchTasks.sendKeys(taskNameUUID);
+        WebElement searchButtonTasks = driver.findElement(By.xpath("//button[@title=\"Search\" and @class=\"btn btn-info\"]"));
+        searchButtonTasks.click();
+
+        //Pick found task
+        WebDriverWait wait3 = new WebDriverWait(driver, 5);
+        wait3.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//td[@class=\"fieldtype_input  field-168-td item_heading_td\"]")));
+        WebElement foundTask = driver.findElement(By.xpath("//td[@class=\"fieldtype_input  field-168-td item_heading_td\"]"));
+        foundTask.click();
+
+        //More options drop down
+        WebElement moreOptions = driver.findElement(By.xpath("//button[@class=\"btn btn-default btn-sm dropdown-toggle\" and @data-toggle=\"dropdown\"]"));
+        moreOptions.click();
+
+        //Delete
+        WebDriverWait wait4 = new WebDriverWait(driver, 5);
+        wait4.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//i[@class=\"fa fa-trash-o\"]")));
+        WebElement deleteButton = driver.findElement(By.xpath("//i[@class=\"fa fa-trash-o\"]"));
+        deleteButton.click();
+
+        //Confirm delete
+        WebDriverWait waitForDeleteButtonConfirm = new WebDriverWait(driver, 5);
+        waitForDeleteButtonConfirm.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[@type=\"submit\" and @class=\"btn btn-primary btn-primary-modal-action\"]")));
+        WebElement deleteButtonConfirm = driver.findElement(By.xpath("//button[@type=\"submit\" and @class=\"btn btn-primary btn-primary-modal-action\"]"));
+        deleteButtonConfirm.click();
+
+        //Task search new
+        WebElement searchTasksConfirm = driver.findElement(By.id("entity_items_listing944_22_search_keywords"));
+        searchTasksConfirm.clear();
+        searchTasksConfirm.sendKeys(taskNameUUID);
+        WebElement searchButtonTasksConfirm = driver.findElement(By.xpath("//button[@title=\"Search\" and @class=\"btn btn-info\"]"));
+        searchButtonTasksConfirm.click();
+
 
     }
 }
