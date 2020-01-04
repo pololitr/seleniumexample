@@ -1,10 +1,15 @@
 package cz.vse.selenium;
 
+import cz.churchcrm.testframework.DashboardPage;
+import cz.churchcrm.testframework.LoginPage;
+import cz.churchcrm.testframework.ProjectsPage;
 import org.junit.*;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -16,6 +21,8 @@ import java.util.UUID;
 public class testCreateProject {
     UUID uuid = UUID.randomUUID();
     String randomUUIDString = uuid.toString();
+//    UUID uuid = UUID.randomUUID();
+//    String randomUUIDString = uuid.toString();
     /*
     Test Suite - Creating project
 
@@ -29,126 +36,60 @@ public class testCreateProject {
      */
 
 
-    private ChromeDriver driver;
+//    private ChromeDriver driver;
 
-    @Before
-    public void init() {
-        ChromeOptions cho = new ChromeOptions();
-        boolean runOnTravis = false;
-        if (runOnTravis) {
-            cho.addArguments("headless");
-        } else {
-            System.setProperty("webdriver.chrome.driver", "src/test/resources/drivers/chromedriver.exe");
-        }
-//      ChromeDriverService service = new ChromeDriverService();
-        driver = new ChromeDriver(cho);
-//      driver.manage().window().maximize();
-    }
+//    @Before
+//    public void init() {
+//        ChromeOptions cho = new ChromeOptions();
+//        boolean runOnTravis = false;
+//        if (runOnTravis) {
+//            cho.addArguments("headless");
+//        } else {
+//            System.setProperty("webdriver.chrome.driver", "src/test/resources/drivers/chromedriver.exe");
+//        }
+////      ChromeDriverService service = new ChromeDriverService();
+//        driver = new ChromeDriver(cho);
+////      driver.manage().window().maximize();
+//    }
+//
+//    @After
+//    public void tearDown() {
+//        // driver.close();
+//    }
 
-    @After
-    public void tearDown() {
-        // driver.close();
-    }
-
-    @Test
+    @Test @Ignore
     public void createProjectPositive() {
-        // given
-        driver.get("https://digitalnizena.cz/rukovoditel/");
 
-        // when
-        WebElement usernameInput = driver.findElement(By.name("username"));
-        usernameInput.sendKeys("rukovoditel");
-        WebElement passwordInput = driver.findElement(By.name("password"));
-        passwordInput.sendKeys("vse456ru");
-        WebElement loginButton = driver.findElement(By.xpath("//button[@type=\"submit\" and @class=\"btn btn-info pull-right\"]"));
-        loginButton.click();
+        WebDriver driver = BrowserFactory.startBrowser("chrome","https://digitalnizena.cz/rukovoditel/");
+        LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
+        loginPage.loginIntoPortal("rukovoditel","vse456ru");
 
         //go to projects
-        WebElement sidebarProjects = driver.findElement(By.xpath("//i[@class=\"fa fa-reorder\"]"));
-        sidebarProjects.click();
+        DashboardPage dashboardPage = PageFactory.initElements(driver, DashboardPage.class);
+        dashboardPage.goToProjects();
 
-       //add project
-        WebElement addProject = driver.findElement(By.xpath("//button[@class=\"btn btn-primary\" and @type=\"button\"]"));
-        addProject.click();
+        //search form specific name
+        ProjectsPage projectsPage = PageFactory.initElements(driver, ProjectsPage.class);
+        projectsPage.searchProjects("chms00");
 
-        //Project priority
-        WebDriverWait wait1 = new WebDriverWait(driver, 5);
-        wait1.until(ExpectedConditions.visibilityOfElementLocated(By.id("fields_156")));
-        Select priority = new Select(driver.findElement(By.xpath("//select[@name=\"fields[156]\"]")));
-        priority.selectByVisibleText("Urgent");
-        priority.selectByValue("35");
-
-        //Project status
-        Select projectStatus = new Select(driver.findElement(By.id("fields_157")));
-        projectStatus.selectByValue("37");
-
-
-        //Project Name
-
-        WebElement projectName = driver.findElement(By.xpath("//input[@name=\"fields[158]\"]"));
-        projectName.sendKeys("chms00-project-"+ randomUUIDString);
-
-        //Project start date
-        WebElement projectDate = driver.findElement(By.xpath("//button[@class=\"btn btn-default date-set\"]"));
-        projectDate.click();
-
-        //Project start date set today
-        WebElement projectDateSetToday = driver.findElement(By.xpath("//td[@class=\"active day\"]"));
-        projectDate.click();
-
-        WebElement projectSubmit = driver.findElement(By.xpath("//button[@type=\"submit\" and @class=\"btn btn-primary btn-primary-modal-action\"]"));
-        projectSubmit.click();
-
+        //Crate project
+        projectsPage.createProject("35","37", "chms00-PROJECT-"+randomUUIDString);
     }
 
     @Test
     public void createProjectNegative() {
-        // given
-        driver.get("https://digitalnizena.cz/rukovoditel/");
 
-        // when
-        WebElement usernameInput = driver.findElement(By.name("username"));
-        usernameInput.sendKeys("rukovoditel");
-        WebElement passwordInput = driver.findElement(By.name("password"));
-        passwordInput.sendKeys("vse456ru");
-        WebElement loginButton = driver.findElement(By.xpath("//button[@type=\"submit\" and @class=\"btn btn-info pull-right\"]"));
-        loginButton.click();
+        WebDriver driver = BrowserFactory.startBrowser("chrome","https://digitalnizena.cz/rukovoditel/");
+        LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
+        loginPage.loginIntoPortal("rukovoditel","vse456ru");
 
         //go to projects
-        WebElement sidebarProjects = driver.findElement(By.xpath("//i[@class=\"fa fa-reorder\"]"));
-        sidebarProjects.click();
+        DashboardPage dashboardPage = PageFactory.initElements(driver, DashboardPage.class);
+        dashboardPage.goToProjects();
 
-        //add project
-        WebElement addProject = driver.findElement(By.xpath("//button[@class=\"btn btn-primary\" and @type=\"button\"]"));
-        addProject.click();
+        //Crate project
+        ProjectsPage projectsPage = PageFactory.initElements(driver, ProjectsPage.class);
+        projectsPage.createProject("35","37", "");
 
-        //Project priority
-        WebDriverWait wait1 = new WebDriverWait(driver, 5);
-        wait1.until(ExpectedConditions.visibilityOfElementLocated(By.id("fields_156")));
-        Select priority = new Select(driver.findElement(By.xpath("//select[@name=\"fields[156]\"]")));
-        priority.selectByVisibleText("Urgent");
-        priority.selectByValue("35");
-
-        //Project status
-        Select projectStatus = new Select(driver.findElement(By.id("fields_157")));
-        projectStatus.selectByValue("37");
-
-
-        //Project Name
-        WebElement projectName = driver.findElement(By.xpath("//input[@name=\"fields[158]\"]"));
-        projectName.sendKeys("");
-
-        //Project start date
-        WebElement projectDate = driver.findElement(By.xpath("//button[@class=\"btn btn-default date-set\"]"));
-        projectDate.click();
-
-        //Project start date set today
-        WebElement projectDateSetToday = driver.findElement(By.xpath("//td[@class=\"active day\"]"));
-        projectDate.click();
-
-        WebElement projectSubmit = driver.findElement(By.xpath("//button[@type=\"submit\" and @class=\"btn btn-primary btn-primary-modal-action\"]"));
-        projectSubmit.click();
-
-        WebElement required = driver.findElement(By.xpath("//label[@id=\"fields_158-error\"]"));
     }
 }

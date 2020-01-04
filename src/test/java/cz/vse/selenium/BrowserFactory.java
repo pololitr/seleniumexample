@@ -6,7 +6,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.opera.OperaDriver;
 
-public class browserFactory {
+public class BrowserFactory {
     static WebDriver driver;
 
     public static WebDriver startBrowser(String browserName, String url)

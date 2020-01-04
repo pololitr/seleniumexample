@@ -5,10 +5,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class loginPage {
+public class LoginPage {
     protected WebDriver driver;
 
-    public loginPage(WebDriver localDriver){
+    public LoginPage(WebDriver localDriver){
         this.driver = localDriver;
     }
     @FindBy(name="username")
