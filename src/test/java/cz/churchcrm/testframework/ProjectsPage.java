@@ -8,8 +8,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.UUID;
-
 public class ProjectsPage {
     protected WebDriver driver;
     public ProjectsPage(WebDriver localDriver){
@@ -25,12 +23,6 @@ public class ProjectsPage {
 
     @FindBy(xpath="//button[@class=\"btn btn-primary\" and @type=\"button\"]")
     WebElement addProject;
-
-//    @FindBy(xpath="//select[@name=\"fields[156]\"]")
-//    WebElement priority;
-
-    @FindBy(id="fields_157")
-    WebElement projectStatus;
 
     @FindBy(xpath="//input[@name=\"fields[158]\"]")
     WebElement projectName;
@@ -70,5 +62,11 @@ public class ProjectsPage {
 
         projectSubmit.click();
 
+    }
+    public void openProject(String projectName){
+        WebDriverWait wait1 = new WebDriverWait(driver, 5);
+        wait1.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[contains(text(),\""+projectName+"\")]")));
+        WebElement foundProject = driver.findElement(By.xpath("//a[contains(text(),\""+projectName+"\")]"));
+        foundProject.click();
     }
 }

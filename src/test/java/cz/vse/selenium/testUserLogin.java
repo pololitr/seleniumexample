@@ -32,7 +32,7 @@ public class testUserLogin {
     }
 
     @Test
-    public void userLogoutFrontEnd() {
+    public void userLogout() {
         WebDriver driver = BrowserFactory.startBrowser("chrome","https://digitalnizena.cz/rukovoditel/");
         LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
         loginPage.loginIntoPortal("rukovoditel","vse456ru");
