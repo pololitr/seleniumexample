@@ -3,23 +3,19 @@ package cz.churchcrm.testframework;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
-public class LoginPage extends Page {
+public class DeprecatedLoginPage extends Page {
 
-    public LoginPage(WebDriver driver) {
+    public DeprecatedLoginPage(WebDriver driver) {
         super(driver);
     }
 
-    public DashboardPage login(String username, String password) {
-        driver.findElement(By.cssSelector("#UserBox"))
-                .sendKeys(username);
-        driver.findElement(By.cssSelector("#PasswordBox"))
-                .sendKeys(password);
-        driver.findElement(By.cssSelector(".btn-primary"))
-                .click();
+    public DeprecatedDashboardPage login(String username, String password) {
+        driver.findElement(By.cssSelector("#UserBox")).sendKeys(username);
+        driver.findElement(By.cssSelector("#PasswordBox")).sendKeys(password);
+        driver.findElement(By.cssSelector(".btn-primary")).click();
 
-        return new DashboardPage(driver);
+        return new DeprecatedDashboardPage(driver);
     }
 
     public void shouldNotBeOpen() {

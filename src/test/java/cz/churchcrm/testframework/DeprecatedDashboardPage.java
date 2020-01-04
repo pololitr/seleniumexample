@@ -4,9 +4,9 @@ import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-public class DashboardPage extends Page {
+public class DeprecatedDashboardPage extends Page {
 
-    public DashboardPage(WebDriver driver) {
+    public DeprecatedDashboardPage(WebDriver driver) {
         super(driver);
     }
 
