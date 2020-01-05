@@ -1,9 +1,6 @@
 package cz.vse.selenium;
 
-import cz.churchcrm.testframework.BrowserFactory;
-import cz.churchcrm.testframework.ConfigFileReader;
-import cz.churchcrm.testframework.LoginPage;
-import cz.churchcrm.testframework.TasksPage;
+import cz.churchcrm.testframework.*;
 import org.junit.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -38,46 +35,54 @@ public class TestTasks {
 
      */
 
-    @Test @Ignore
+    @Test
     public void createTaskSimplePositive() {
-        String taskNameUUID = "chms00-task-"+ randomUUIDString;
+        String taskNameUUID = "chms00-TASK-"+ randomUUIDString;
+        String projectNameUUID = "chms00-PROJECT-"+ randomUUIDString;
 
         WebDriver driver = BrowserFactory.startBrowser("chrome", "");
 
         LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
         loginPage.loginIntoPortal("rukovoditel","vse456ru");
 
+        ProjectsPage projectsPage = PageFactory.initElements(driver, ProjectsPage.class);
+        projectsPage.createProject("35", "37", projectNameUUID);
+
 //        Add task
         TasksPage tasksPage = PageFactory.initElements(driver, TasksPage.class);
-        tasksPage.createTask("chms00","42", ""+taskNameUUID,"46","54","DRY");
+        tasksPage.createTask(projectNameUUID,"42", ""+taskNameUUID,"46","54","DRY");
 
         //Validate task
-        tasksPage.validateTask("chms00", taskNameUUID,"DRY","Task","New","High");
+        tasksPage.validateTask(projectNameUUID, taskNameUUID,"DRY","Task","New","High");
 
         //Delete task
-        tasksPage.deleteTask("chms00", taskNameUUID);
+        tasksPage.deleteTask(projectNameUUID, taskNameUUID);
         //todo kontrola ze je to empty
     }
 
     @Test
     public void testMultipleTaskCration(){
         String taskNameUUID = "chms00-task-"+ randomUUIDString;
+        String projectNameUUID = "chms00-PROJECT-"+ randomUUIDString;
         WebDriver driver = BrowserFactory.startBrowser("chrome", "");
 
         LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
         loginPage.loginIntoPortal("rukovoditel","vse456ru");
 
+        ProjectsPage projectsPage = PageFactory.initElements(driver, ProjectsPage.class);
+        projectsPage.createProject("35", "37", projectNameUUID);
+
         TasksPage tasksPage = PageFactory.initElements(driver, TasksPage.class);
-        tasksPage.createTask("chms00", "42", ""+taskNameUUID,"46","54","DRY-New");
-        tasksPage.createTask("chms00", "42", ""+taskNameUUID,"47","54","DRY-Open");
-        tasksPage.createTask("chms00", "42", ""+taskNameUUID,"48","54","DRY-Waiting");
-        tasksPage.createTask("chms00", "42", ""+taskNameUUID,"49","54","DRY-Done");
-        tasksPage.createTask("chms00", "42", ""+taskNameUUID,"50","54","DRY-Closed");
-        tasksPage.createTask("chms00", "42", ""+taskNameUUID,"51","54","DRY-Paid");
-        tasksPage.createTask("chms00", "42", ""+taskNameUUID,"52","54","DRY-Canceled");
+        tasksPage.createTask(projectNameUUID, "42", ""+taskNameUUID,"46","54","DRY-New");
+        tasksPage.createTask(projectNameUUID, "42", ""+taskNameUUID,"47","54","DRY-Open");
+        tasksPage.createTask(projectNameUUID, "42", ""+taskNameUUID,"48","54","DRY-Waiting");
+        tasksPage.createTask(projectNameUUID, "42", ""+taskNameUUID,"49","54","DRY-Done");
+        tasksPage.createTask(projectNameUUID, "42", ""+taskNameUUID,"50","54","DRY-Closed");
+        tasksPage.createTask(projectNameUUID, "42", ""+taskNameUUID,"51","54","DRY-Paid");
+        tasksPage.createTask(projectNameUUID, "42", ""+taskNameUUID,"52","54","DRY-Canceled");
 
         //default filetr is on
-        tasksPage.openTask("chms00", "chms00");
+        projectsPage.openProject(projectNameUUID);
 
         //Filter
         String appliedFilterGet = driver.findElement(By.xpath("//span[@class=\"filters-preview-condition-include\"]")).getText();
@@ -86,7 +91,7 @@ public class TestTasks {
         //see 3
         tasksPage.checkTaskTableRecords(3);
 
-        //Chnage filter -  New and Waitin
+        //Change filter -  New and Waiting
         WebElement getFilterButton = driver.findElement(By.xpath("//span[@class=\"filters-preview-condition-include\"]"));
         getFilterButton.click();
 
@@ -107,9 +112,9 @@ public class TestTasks {
         deleteFiltersButton.click();
 
         tasksPage.checkTaskTableRecords(7);
-        tasksPage.taskBulkDelete("chms00");
+        tasksPage.taskBulkDelete(projectNameUUID);
 
         //Return default filters
-        tasksPage.defaultFilters("chms00");
+        tasksPage.defaultFilters(projectNameUUID);
     }
 }

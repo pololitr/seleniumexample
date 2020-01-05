@@ -2,6 +2,7 @@ package cz.churchcrm.testframework;
 
 import org.junit.Assert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -46,9 +47,13 @@ public class TasksPage {
     @FindBy(xpath = "//button[@type=\"submit\" and @class=\"btn btn-primary btn-primary-modal-action\"]")
     WebElement deleteButtonConfirm;
 
-    public void searchTask (String taskName){
+    public void searchTask (String projectName, String taskName){
         DashboardPage dashboardPage = PageFactory.initElements(driver, DashboardPage.class);
         dashboardPage.goToProjects();
+
+        ProjectsPage projectsPage = PageFactory.initElements(driver, ProjectsPage.class);
+        projectsPage.openProject(projectName);
+
         searchTasks.clear();
         searchTasks.sendKeys(taskName);
         searchButtonTasks.click();
@@ -101,15 +106,18 @@ public class TasksPage {
         DashboardPage dashboardPage = PageFactory.initElements(driver, DashboardPage.class);
         dashboardPage.goToProjects();
 
-        ProjectsPage projectsPage = PageFactory.initElements(driver, ProjectsPage.class);
-        projectsPage.searchProjects(projectName);
-        projectsPage.openProject(projectName);
+//        ProjectsPage projectsPage = PageFactory.initElements(driver, ProjectsPage.class);
+//       // projectsPage.searchProjects(projectName);
+//        projectsPage.openProject(projectName);
 
-        searchTask(taskName);
+        searchTask(projectName, taskName);
+//todo proc to nefacha
+//        org.openqa.selenium.WebDriverException: unknown error: Element <a title="Info" class="btn btn-default btn-xs purple" href="https://digitalnizena.cz/rukovoditel/index.php?module=items/info&amp;path=21-1279/22-5073&amp;gotopage[1356]=1">...</a> is not clickable at point (357, 452). Other element would receive the click: <div class="data_listing_processing"></div>
+
         WebDriverWait wait1 = new WebDriverWait(driver, 5);
-        wait1.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[contains(text(),\""+taskName+"\")]")));
-        WebElement foundTask = driver.findElement(By.xpath("//a[contains(text(),\""+taskName+"\")]"));
-        foundTask.click();
+        wait1.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@class=\"btn btn-default btn-xs purple\" and @title=\"Info\"]")));
+        WebElement foundTask = driver.findElement(By.xpath("//a[@class=\"btn btn-default btn-xs purple\" and @title=\"Info\"]"));
+        foundTask.sendKeys(Keys.RETURN);
 
     }
 

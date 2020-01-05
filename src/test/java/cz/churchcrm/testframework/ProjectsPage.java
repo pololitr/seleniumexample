@@ -4,6 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -37,12 +38,17 @@ public class ProjectsPage {
     WebElement projectSubmit;
 
     public void searchProjects (String projectName){
+        DashboardPage dashboardPage = PageFactory.initElements(driver, DashboardPage.class);
+        dashboardPage.goToProjects();
         searchProjects.clear();
         searchProjects.sendKeys(projectName);
         searchButton.click();
     }
 
     public void createProject(String priorityVal, String statusVal, String NameVal){
+        DashboardPage dashboardPage = PageFactory.initElements(driver, DashboardPage.class);
+        dashboardPage.goToProjects();
+
         addProject.click();
         //Project priority
         WebDriverWait wait1 = new WebDriverWait(driver, 5);
@@ -64,6 +70,9 @@ public class ProjectsPage {
 
     }
     public void openProject(String projectName){
+        DashboardPage dashboardPage = PageFactory.initElements(driver, DashboardPage.class);
+        dashboardPage.goToProjects();
+        searchProjects(projectName);
         WebDriverWait wait1 = new WebDriverWait(driver, 5);
         wait1.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[contains(text(),\""+projectName+"\")]")));
         WebElement foundProject = driver.findElement(By.xpath("//a[contains(text(),\""+projectName+"\")]"));

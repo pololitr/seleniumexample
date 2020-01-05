@@ -17,6 +17,7 @@ import java.util.UUID;
 public class TestCreateProject {
     UUID uuid = UUID.randomUUID();
     String randomUUIDString = uuid.toString();
+    String projectNameUUID = "chms00-PROJECT-"+ randomUUIDString;
 
 //    UUID uuid = UUID.randomUUID();
 //    String randomUUIDString = uuid.toString();
@@ -31,11 +32,6 @@ public class TestCreateProject {
 
      */
 
-    @Test
-    public void runProjectTests(){
-        createProjectNegative();
-        createProjectPositive();
-    }
 
     @Test
     public void createProjectPositive() {
@@ -53,7 +49,7 @@ public class TestCreateProject {
 //        projectsPage.searchProjects("chms00");
 
         //Crate project
-        projectsPage.createProject("35","37", "chms00-PROJECT-"+randomUUIDString);
+        projectsPage.createProject("35","37", projectNameUUID);
     }
 
     @Test
