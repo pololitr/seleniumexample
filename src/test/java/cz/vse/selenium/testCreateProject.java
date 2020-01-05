@@ -32,7 +32,7 @@ public class testCreateProject {
     @Test
     public void createProjectPositive() {
 
-        WebDriver driver = BrowserFactory.startBrowser("chrome","https://digitalnizena.cz/rukovoditel/");
+        WebDriver driver = BrowserFactory.startBrowser("chrome","","https://digitalnizena.cz/rukovoditel/");
         LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
         loginPage.loginIntoPortal("rukovoditel","vse456ru");
 
@@ -51,7 +51,7 @@ public class testCreateProject {
     @Test
     public void createProjectNegative() {
 
-        WebDriver driver = BrowserFactory.startBrowser("chrome","https://digitalnizena.cz/rukovoditel/");
+        WebDriver driver = BrowserFactory.startBrowser("chrome","","https://digitalnizena.cz/rukovoditel/");
         LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
         loginPage.loginIntoPortal("rukovoditel","vse456ru");
 

@@ -1,9 +1,11 @@
 package cz.churchcrm.testframework;
 
+import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -46,12 +48,23 @@ public class TasksPage {
     WebElement deleteButtonConfirm;
 
     public void searchTask (String taskName){
+        DashboardPage dashboardPage = PageFactory.initElements(driver, DashboardPage.class);
+        dashboardPage.goToProjects();
         searchTasks.clear();
         searchTasks.sendKeys(taskName);
         searchButtonTasks.click();
     }
 
-    public void createTask (String taskType,String taskName, String taskStatus, String taskPriority, String taskDescription){
+    public void createTask (String projectName, String taskType,String taskName, String taskStatus, String taskPriority, String taskDescription){
+        DashboardPage dashboardPage = PageFactory.initElements(driver, DashboardPage.class);
+        dashboardPage.goToProjects();
+
+        ProjectsPage projectsPage = PageFactory.initElements(driver, ProjectsPage.class);
+        projectsPage.searchProjects(projectName);
+        //todo kdyz nic nenajdu tak vytvor projekt a menu predej do contains pickeru
+        projectsPage.openProject(projectName);
+
+
         addTask.click();
 
         //Task priority
@@ -81,9 +94,19 @@ public class TasksPage {
 
         //task submit
         taskSubmit.click();
+
+
     }
 
-    public void openTask(String taskName){
+    public void openTask(String projectName, String taskName){
+        DashboardPage dashboardPage = PageFactory.initElements(driver, DashboardPage.class);
+        dashboardPage.goToProjects();
+
+        ProjectsPage projectsPage = PageFactory.initElements(driver, ProjectsPage.class);
+        projectsPage.searchProjects(projectName);
+        projectsPage.openProject(projectName);
+
+        searchTask(taskName);
         WebDriverWait wait1 = new WebDriverWait(driver, 5);
         wait1.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[contains(text(),\""+taskName+"\")]")));
         WebElement foundTask = driver.findElement(By.xpath("//a[contains(text(),\""+taskName+"\")]"));
@@ -92,9 +115,9 @@ public class TasksPage {
     }
 
 
-    public void deleteTask (String taskName){
+    public void deleteTask (String projectName, String taskName){
         //open task
-        openTask(taskName);
+        openTask(projectName, taskName);
         //open more options
         moreOptions.click();
         //Delete
@@ -105,5 +128,24 @@ public class TasksPage {
         WebDriverWait waitForDeleteButtonConfirm = new WebDriverWait(driver, 5);
         waitForDeleteButtonConfirm.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[@type=\"submit\" and @class=\"btn btn-primary btn-primary-modal-action\"]")));
         deleteButtonConfirm.click();
+    }
+
+    public void validateTask(String projectName, String taskName,String taskDescription,String taskType,String taskStatus,String taskPriority){
+        openTask(projectName, taskName);
+        // name,
+        String taskNameGet = driver.findElement(By.xpath("//div[@class=\"caption\"]")).getText();
+        Assert.assertEquals(taskNameGet, taskName);
+        // description,
+        String taskDescriptionGet = driver.findElement(By.xpath(" //div[@class=\"content_box_content fieldtype_textarea_wysiwyg\"]")).getText();
+        Assert.assertEquals(taskDescriptionGet, taskDescription);
+        //type Task,
+        String taskTypeGet = driver.findElement(By.xpath("//tr[@class=\"form-group-167\"]")).getText();
+        Assert.assertEquals(taskTypeGet, "Type\n"+taskType);
+        // status
+        String taskStatusGet = driver.findElement(By.xpath("//tr[@class=\"form-group-169\"]")).getText();
+        Assert.assertEquals(taskStatusGet, "Status\n"+taskStatus);
+        // priority
+        String taskPriorityGet = driver.findElement(By.xpath("//tr[@class=\"form-group-170\"]")).getText();
+        Assert.assertEquals(taskPriorityGet, "Priority\n"+taskPriority);
     }
 }

@@ -19,21 +19,21 @@ public class testUserLogin {
 
     @Test
     public void loginPositive() {
-        WebDriver driver = BrowserFactory.startBrowser("chrome","https://digitalnizena.cz/rukovoditel/");
+        WebDriver driver = BrowserFactory.startBrowser("chrome", "","https://digitalnizena.cz/rukovoditel/");
         LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
         loginPage.loginIntoPortal("rukovoditel","vse456ru");
     }
 
     @Test
     public void loginNegative() {
-        WebDriver driver = BrowserFactory.startBrowser("chrome","https://digitalnizena.cz/rukovoditel/");
+        WebDriver driver = BrowserFactory.startBrowser("chrome","","https://digitalnizena.cz/rukovoditel/");
         LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
         loginPage.loginIntoPortal("rukovoditel","SpatneHeslo");
     }
 
     @Test
     public void userLogout() {
-        WebDriver driver = BrowserFactory.startBrowser("chrome","https://digitalnizena.cz/rukovoditel/");
+        WebDriver driver = BrowserFactory.startBrowser("chrome","","https://digitalnizena.cz/rukovoditel/");
         LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
         loginPage.loginIntoPortal("rukovoditel","vse456ru");
         loginPage.logout();
