@@ -1,4 +1,4 @@
-package cz.vse.selenium;
+package cz.churchcrm.testframework;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -8,9 +8,12 @@ import org.openqa.selenium.opera.OperaDriver;
 
 public class BrowserFactory {
     static WebDriver driver;
+    static ConfigFileReader configFileReader;
 
-    public static WebDriver startBrowser(String browserName, String browserArgs, String url)
+    public static WebDriver startBrowser(String browserName, String browserArgs )
     {
+        configFileReader= new ConfigFileReader();
+
         switch (browserName) {
             case "chrome":
                 System.setProperty("webdriver.chrome.driver", "src/test/resources/drivers/chromedriver.exe");
@@ -28,7 +31,7 @@ public class BrowserFactory {
                 break;
         }
         driver.manage().window().maximize();
-        driver.get(url);
+        driver.get(configFileReader.getApplicationUrl());
 
         return driver;
     }

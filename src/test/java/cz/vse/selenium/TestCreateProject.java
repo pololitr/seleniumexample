@@ -1,20 +1,23 @@
 package cz.vse.selenium;
 
+import cz.churchcrm.testframework.BrowserFactory;
 import cz.churchcrm.testframework.DashboardPage;
 import cz.churchcrm.testframework.LoginPage;
 import cz.churchcrm.testframework.ProjectsPage;
 import org.junit.*;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
+import cz.churchcrm.testframework.ConfigFileReader;
 
 
 
 import java.util.UUID;
 
 
-public class testCreateProject {
+public class TestCreateProject {
     UUID uuid = UUID.randomUUID();
     String randomUUIDString = uuid.toString();
+
 //    UUID uuid = UUID.randomUUID();
 //    String randomUUIDString = uuid.toString();
     /*
@@ -26,13 +29,18 @@ public class testCreateProject {
 
    TC#1: Project without name is not created
 
-
      */
+
+    @Test
+    public void runProjectTests(){
+        createProjectNegative();
+        createProjectPositive();
+    }
 
     @Test
     public void createProjectPositive() {
 
-        WebDriver driver = BrowserFactory.startBrowser("chrome","","https://digitalnizena.cz/rukovoditel/");
+        WebDriver driver = BrowserFactory.startBrowser("chrome","");
         LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
         loginPage.loginIntoPortal("rukovoditel","vse456ru");
 
@@ -51,7 +59,7 @@ public class testCreateProject {
     @Test
     public void createProjectNegative() {
 
-        WebDriver driver = BrowserFactory.startBrowser("chrome","","https://digitalnizena.cz/rukovoditel/");
+        WebDriver driver = BrowserFactory.startBrowser("chrome","");
         LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
         loginPage.loginIntoPortal("rukovoditel","vse456ru");
 

@@ -1,24 +1,20 @@
 package cz.vse.selenium;
 
-import cz.churchcrm.testframework.DashboardPage;
+import cz.churchcrm.testframework.BrowserFactory;
+import cz.churchcrm.testframework.ConfigFileReader;
 import cz.churchcrm.testframework.LoginPage;
-import cz.churchcrm.testframework.ProjectsPage;
 import cz.churchcrm.testframework.TasksPage;
 import org.junit.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.List;
 import java.util.UUID;
 
-public class testTasks {
+public class TestTasks {
     UUID uuid = UUID.randomUUID();
     String randomUUIDString = uuid.toString();
         /*
@@ -46,7 +42,7 @@ public class testTasks {
     public void createTaskSimplePositive() {
         String taskNameUUID = "chms00-task-"+ randomUUIDString;
 
-        WebDriver driver = BrowserFactory.startBrowser("chrome", "", "https://digitalnizena.cz/rukovoditel/");
+        WebDriver driver = BrowserFactory.startBrowser("chrome", "");
 
         LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
         loginPage.loginIntoPortal("rukovoditel","vse456ru");
@@ -66,7 +62,7 @@ public class testTasks {
     @Test
     public void testMultipleTaskCration(){
         String taskNameUUID = "chms00-task-"+ randomUUIDString;
-        WebDriver driver = BrowserFactory.startBrowser("chrome", "", "https://digitalnizena.cz/rukovoditel/");
+        WebDriver driver = BrowserFactory.startBrowser("chrome", "");
 
         LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
         loginPage.loginIntoPortal("rukovoditel","vse456ru");

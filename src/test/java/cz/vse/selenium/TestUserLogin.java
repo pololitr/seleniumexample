@@ -1,11 +1,17 @@
 package cz.vse.selenium;
 
+import cz.churchcrm.testframework.BrowserFactory;
+import cz.churchcrm.testframework.ConfigFileReader;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import cz.churchcrm.testframework.LoginPage;
 import org.openqa.selenium.support.PageFactory;
 
-public class testUserLogin {
+public class TestUserLogin {
+    ConfigFileReader configFileReader;
+
+ //   String appUrl = configFileReader.getApplicationUrl();
     /*
 
    Test Suite - User Login
@@ -19,21 +25,21 @@ public class testUserLogin {
 
     @Test
     public void loginPositive() {
-        WebDriver driver = BrowserFactory.startBrowser("chrome", "","https://digitalnizena.cz/rukovoditel/");
+        WebDriver driver = BrowserFactory.startBrowser("chrome", "");
         LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
         loginPage.loginIntoPortal("rukovoditel","vse456ru");
     }
 
-    @Test
+    @Test @Ignore
     public void loginNegative() {
-        WebDriver driver = BrowserFactory.startBrowser("chrome","","https://digitalnizena.cz/rukovoditel/");
+        WebDriver driver = BrowserFactory.startBrowser("chrome","");
         LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
         loginPage.loginIntoPortal("rukovoditel","SpatneHeslo");
     }
 
-    @Test
+    @Test @Ignore
     public void userLogout() {
-        WebDriver driver = BrowserFactory.startBrowser("chrome","","https://digitalnizena.cz/rukovoditel/");
+        WebDriver driver = BrowserFactory.startBrowser("chrome","");
         LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
         loginPage.loginIntoPortal("rukovoditel","vse456ru");
         loginPage.logout();
