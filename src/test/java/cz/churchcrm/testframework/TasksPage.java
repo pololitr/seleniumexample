@@ -10,6 +10,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.List;
+
 public class TasksPage {
     protected WebDriver driver;
     public TasksPage(WebDriver localDriver){
@@ -34,9 +36,6 @@ public class TasksPage {
 
     @FindBy(xpath = "//button[@title=\"Search\" and @class=\"btn btn-info\"]")
     WebElement searchButtonTasks;
-
-//    @FindBy(xpath = "//td[@class=\"fieldtype_input  field-168-td item_heading_td\"]")
-//    WebElement foundTask;
 
     @FindBy(xpath = "//button[@class=\"btn btn-default btn-sm dropdown-toggle\" and @data-toggle=\"dropdown\"]")
     WebElement moreOptions;
@@ -148,4 +147,57 @@ public class TasksPage {
         String taskPriorityGet = driver.findElement(By.xpath("//tr[@class=\"form-group-170\"]")).getText();
         Assert.assertEquals(taskPriorityGet, "Priority\n"+taskPriority);
     }
+
+    public void checkTaskTableRecords (int Expected){
+
+        WebDriverWait wait4 = new WebDriverWait(driver, 5);
+        wait4.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//tbody")));
+        WebElement table = driver.findElement(By.xpath("//tbody"));
+        List<WebElement> txt = table.findElements(By.tagName("tr"));
+        Assert.assertEquals(Expected, txt.size());
+    }
+    public void taskBulkDelete (String projectName){
+        WebDriverWait wait = new WebDriverWait(driver, 5);
+        DashboardPage dashboardPage = PageFactory.initElements(driver, DashboardPage.class);
+        dashboardPage.goToProjects();
+
+        ProjectsPage projectsPage = PageFactory.initElements(driver, ProjectsPage.class);
+        projectsPage.searchProjects(projectName);
+        projectsPage.openProject(projectName);
+
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id=\"uniform-select_all_items\"]")));
+        WebElement deleteAllTasks = driver.findElement(By.xpath("//div[@id=\"uniform-select_all_items\"]"));
+        deleteAllTasks.click();
+
+        WebElement withSelected = driver.findElement(By.cssSelector("body>div.page-container>div.page-content-wrapper>div>div>div.row>div>div:nth-child(7)>div:nth-child(1)>div>div>button"));
+        withSelected.click();
+
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("body>div.page-container>div.page-content-wrapper>div>div>div.row>div>div:nth-child(7)>div:nth-child(1)>div>div>ul>li:nth-child(2)>a")));
+        WebElement deleteBulk = driver.findElement(By.cssSelector("body>div.page-container>div.page-content-wrapper>div>div>div.row>div>div:nth-child(7)>div:nth-child(1)>div>div>ul>li:nth-child(2)>a"));
+        deleteBulk.click();
+
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"delete_selected_form\"]/div[2]/button[1]")));
+        WebElement confirmDeleteBulk = driver.findElement(By.xpath(" //*[@id=\"delete_selected_form\"]/div[2]/button[1]"));
+        confirmDeleteBulk.click();
+    }
+
+    public void defaultFilters(String projectName){
+        DashboardPage dashboardPage = PageFactory.initElements(driver, DashboardPage.class);
+        dashboardPage.goToProjects();
+
+        ProjectsPage projectsPage = PageFactory.initElements(driver, ProjectsPage.class);
+        projectsPage.searchProjects(projectName);
+        projectsPage.openProject(projectName);
+
+        WebDriverWait wait = new WebDriverWait(driver, 5);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("/html/body/div[3]/div[2]/div/div/div[2]/div/div[2]/div[1]/div[1]/div[1]/button")));
+        WebElement filterButton = driver.findElement(By.xpath("/html/body/div[3]/div[2]/div/div/div[2]/div/div[2]/div[1]/div[1]/div[1]/button"));
+        filterButton.click();
+
+        WebDriverWait wait7 = new WebDriverWait(driver, 10);
+        wait7.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[contains(@href,'users_filters&action=use&id=default')]")));
+        WebElement getFilters = driver.findElement(By.xpath("//a[contains(@href,'users_filters&action=use&id=default')]"));
+        getFilters.click();
+    }
+
 }

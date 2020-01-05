@@ -64,7 +64,7 @@ public class testTasks {
     }
 
     @Test
-    public void dlouhaPicovina(){
+    public void testMultipleTaskCration(){
         String taskNameUUID = "chms00-task-"+ randomUUIDString;
         WebDriver driver = BrowserFactory.startBrowser("chrome", "", "https://digitalnizena.cz/rukovoditel/");
 
@@ -72,13 +72,13 @@ public class testTasks {
         loginPage.loginIntoPortal("rukovoditel","vse456ru");
 
         TasksPage tasksPage = PageFactory.initElements(driver, TasksPage.class);
-//        tasksPage.createTask("chms00", "42", ""+taskNameUUID,"46","54","DRY-New");
-//        tasksPage.createTask("chms00", "42", ""+taskNameUUID,"47","54","DRY-Open");
-//        tasksPage.createTask("chms00", "42", ""+taskNameUUID,"48","54","DRY-Waiting");
-//        tasksPage.createTask("chms00", "42", ""+taskNameUUID,"49","54","DRY-Done");
-//        tasksPage.createTask("chms00", "42", ""+taskNameUUID,"50","54","DRY-Closed");
-//        tasksPage.createTask("chms00", "42", ""+taskNameUUID,"51","54","DRY-Paid");
-//        tasksPage.createTask("chms00", "42", ""+taskNameUUID,"52","54","DRY-Canceled");
+        tasksPage.createTask("chms00", "42", ""+taskNameUUID,"46","54","DRY-New");
+        tasksPage.createTask("chms00", "42", ""+taskNameUUID,"47","54","DRY-Open");
+        tasksPage.createTask("chms00", "42", ""+taskNameUUID,"48","54","DRY-Waiting");
+        tasksPage.createTask("chms00", "42", ""+taskNameUUID,"49","54","DRY-Done");
+        tasksPage.createTask("chms00", "42", ""+taskNameUUID,"50","54","DRY-Closed");
+        tasksPage.createTask("chms00", "42", ""+taskNameUUID,"51","54","DRY-Paid");
+        tasksPage.createTask("chms00", "42", ""+taskNameUUID,"52","54","DRY-Canceled");
 
         //default filetr is on
         tasksPage.openTask("chms00", "chms00");
@@ -88,21 +88,32 @@ public class testTasks {
         Assert.assertEquals(appliedFilterGet, "New, Open, Waiting");
 
         //see 3
-        WebDriverWait wait4 = new WebDriverWait(driver, 5);
-        wait4.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//table[@class=\"table table-striped table-bordered table-hover\"]")));
-        WebElement table = driver.findElement(By.xpath("//table[@class=\"table table-striped table-bordered table-hover\"]"));
-        List<WebElement> txt = table.findElements(By.tagName("tr"));
-        System.out.println("Row count:"+txt.size());
-        Assert.assertEquals(4, txt.size());
+        tasksPage.checkTaskTableRecords(3);
 
         //Chnage filter -  New and Waitin
+        WebElement getFilterButton = driver.findElement(By.xpath("//span[@class=\"filters-preview-condition-include\"]"));
+        getFilterButton.click();
+
+        WebDriverWait wait6 = new WebDriverWait(driver, 5);
+        wait6.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"values_chosen\"]/ul/li[2]/a")));
+        WebElement removeFilter = driver.findElement(By.xpath("//*[@id=\"values_chosen\"]/ul/li[2]/a"));
+        removeFilter.click();
+
+        //Save filter
+        WebElement saveButton = driver.findElement(By.xpath("//button[@class=\"btn btn-primary btn-primary-modal-action\"]"));
+        saveButton.click();
 
         //Validate
+        tasksPage.checkTaskTableRecords(2);
 
         //Change filter - all
+        WebElement deleteFiltersButton = driver.findElement(By.xpath("/html/body/div[3]/div[2]/div/div/div[2]/div/div[2]/div[2]/ul/li[1]/a[1]/i"));
+        deleteFiltersButton.click();
 
-        //Validate
+        tasksPage.checkTaskTableRecords(7);
+        tasksPage.taskBulkDelete("chms00");
 
-
+        //Return default filters
+        tasksPage.defaultFilters("chms00");
     }
 }
