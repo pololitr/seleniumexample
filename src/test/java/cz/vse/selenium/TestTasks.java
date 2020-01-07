@@ -9,6 +9,9 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 public class TestTasks {
@@ -28,7 +31,9 @@ public class TestTasks {
 
     Change applied filter in Filter info dialog to only contain (New, Waiting) ...there are more ways how to do it
     (you can click small x on Open "label" to delete it, or you can deal with writing into "suggestion box").
-    Verify only New and Waiting tasks are displayed. Now remove all filters and verify all created tasks are displayed.
+
+    Verify only New and Waiting tasks are displayed.
+    Now remove all filters and verify all created tasks are displayed.
 
     Delete all tasks using Select all and batch delete.
 
@@ -37,27 +42,28 @@ public class TestTasks {
 
     @Test
     public void createTaskSimplePositive() {
+        //Set name for project and task, UUID is same for both
         String taskNameUUID = "chms00-TASK-"+ randomUUIDString;
         String projectNameUUID = "chms00-PROJECT-"+ randomUUIDString;
 
+        //Log into a page
         WebDriver driver = BrowserFactory.startBrowser("chrome", "");
-
         LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
         loginPage.loginIntoPortal("rukovoditel","vse456ru");
 
+        //Create a project
         ProjectsPage projectsPage = PageFactory.initElements(driver, ProjectsPage.class);
         projectsPage.createProject("35", "37", projectNameUUID);
 
-//        Add task
+        //Create a task
         TasksPage tasksPage = PageFactory.initElements(driver, TasksPage.class);
         tasksPage.createTask(projectNameUUID,"42", ""+taskNameUUID,"46","54","DRY");
 
-        //Validate task
+        //Validate Crated task task
         tasksPage.validateTask(projectNameUUID, taskNameUUID,"DRY","Task","New","High");
 
         //Delete task
         tasksPage.deleteTask(projectNameUUID, taskNameUUID);
-        //todo kontrola ze je to empty
     }
 
     @Test
@@ -89,7 +95,8 @@ public class TestTasks {
         Assert.assertEquals(appliedFilterGet, "New, Open, Waiting");
 
         //see 3
-        tasksPage.checkTaskTableRecords(3);
+        List<String> statusExpected = new ArrayList<String>(Arrays.asList("New", "Open", "Waiting"));
+        tasksPage.checkTaskTableRecords(3, statusExpected);
 
         //Change filter -  New and Waiting
         WebElement getFilterButton = driver.findElement(By.xpath("//span[@class=\"filters-preview-condition-include\"]"));
@@ -105,13 +112,18 @@ public class TestTasks {
         saveButton.click();
 
         //Validate
-        tasksPage.checkTaskTableRecords(2);
+        List<String> statusExpected2 = new ArrayList<String>(Arrays.asList("New", "Waiting"));
+        tasksPage.checkTaskTableRecords(2, statusExpected2);
 
         //Change filter - all
         WebElement deleteFiltersButton = driver.findElement(By.xpath("/html/body/div[3]/div[2]/div/div/div[2]/div/div[2]/div[2]/ul/li[1]/a[1]/i"));
         deleteFiltersButton.click();
 
-        tasksPage.checkTaskTableRecords(7);
+        //Check number of records
+        List<String> statusExpected3 = new ArrayList<String>(Arrays.asList("New","Open","Waiting","Done","Closed","Paid","Canceled"));
+        tasksPage.checkTaskTableRecords(7, statusExpected3);
+
+        //Bulk delete
         tasksPage.taskBulkDelete(projectNameUUID);
 
         //Return default filters

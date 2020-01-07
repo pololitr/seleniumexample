@@ -28,16 +28,18 @@ public class TestUserLogin {
         WebDriver driver = BrowserFactory.startBrowser("chrome", "");
         LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
         loginPage.loginIntoPortal("rukovoditel","vse456ru");
+        loginPage.verifySuccessfulLogin();
     }
 
-    @Test @Ignore
+    @Test
     public void loginNegative() {
         WebDriver driver = BrowserFactory.startBrowser("chrome","");
         LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);
         loginPage.loginIntoPortal("rukovoditel","SpatneHeslo");
+        loginPage.verifyUnsuccessfulLogin();
     }
 
-    @Test @Ignore
+    @Test
     public void userLogout() {
         WebDriver driver = BrowserFactory.startBrowser("chrome","");
         LoginPage loginPage = PageFactory.initElements(driver, LoginPage.class);

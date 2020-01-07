@@ -11,6 +11,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TasksPage {
@@ -47,6 +48,13 @@ public class TasksPage {
     @FindBy(xpath = "//button[@type=\"submit\" and @class=\"btn btn-primary btn-primary-modal-action\"]")
     WebElement deleteButtonConfirm;
 
+    String foundTaskXpath = "//a[@class=\"btn btn-default btn-xs purple\" and @title=\"Info\"]";
+    String bulkOperationsCheckbox = "//div[@id=\"uniform-select_all_items\"]";
+    String bulkDelete ="body>div.page-container>div.page-content-wrapper>div>div>div.row>div>div:nth-child(7)>div:nth-child(1)>div>div>ul>li:nth-child(2)>a";
+    String confirmDelete = "//button[@class=\"btn btn-primary btn-primary-modal-action\"]";
+    String filterPicker = "/html/body/div[3]/div[2]/div/div/div[2]/div/div[2]/div[1]/div[1]/div[1]/button";
+    String defaultFilters = "//a[contains(@href,'users_filters&action=use&id=default')]";
+
     public void searchTask (String projectName, String taskName){
         DashboardPage dashboardPage = PageFactory.initElements(driver, DashboardPage.class);
         dashboardPage.goToProjects();
@@ -60,15 +68,16 @@ public class TasksPage {
     }
 
     public void createTask (String projectName, String taskType,String taskName, String taskStatus, String taskPriority, String taskDescription){
+        //Go to projects page
         DashboardPage dashboardPage = PageFactory.initElements(driver, DashboardPage.class);
         dashboardPage.goToProjects();
 
+        //Find a specific project and open it
         ProjectsPage projectsPage = PageFactory.initElements(driver, ProjectsPage.class);
         projectsPage.searchProjects(projectName);
-        //todo kdyz nic nenajdu tak vytvor projekt a menu predej do contains pickeru
         projectsPage.openProject(projectName);
 
-
+        //Initiate adding task
         addTask.click();
 
         //Task priority
@@ -78,49 +87,43 @@ public class TasksPage {
         taskTypeElement.selectByVisibleText("Task");
         taskTypeElement.selectByValue(taskType);
 
-        //task name
+        //Task name
         taskNameElement.sendKeys(taskName);
 
-        //task status
+        //Task status
         Select taskStatusElement = new Select(driver.findElement(By.xpath("//select[@name=\"fields[169]\"]")));
         taskStatusElement.selectByVisibleText("New");
         taskStatusElement.selectByValue(taskStatus);
 
-        //task priority
+        //Task priority
         Select taskPriorityElement = new Select(driver.findElement(By.xpath("//select[@name=\"fields[170]\"]")));
         taskPriorityElement.selectByVisibleText("Medium");
         taskPriorityElement.selectByValue(taskPriority);
 
-        //task description
+        //Task description
         driver.switchTo().frame(0);
         taskDescriptionElement.sendKeys(taskDescription);
         driver.switchTo().defaultContent();
 
-        //task submit
+        //Task submit
         taskSubmit.click();
 
 
     }
 
     public void openTask(String projectName, String taskName){
+        //Go to projects page
         DashboardPage dashboardPage = PageFactory.initElements(driver, DashboardPage.class);
         dashboardPage.goToProjects();
 
-//        ProjectsPage projectsPage = PageFactory.initElements(driver, ProjectsPage.class);
-//       // projectsPage.searchProjects(projectName);
-//        projectsPage.openProject(projectName);
-
+        //Search fro a specific task in a specific project
         searchTask(projectName, taskName);
-//todo proc to nefacha
-//        org.openqa.selenium.WebDriverException: unknown error: Element <a title="Info" class="btn btn-default btn-xs purple" href="https://digitalnizena.cz/rukovoditel/index.php?module=items/info&amp;path=21-1279/22-5073&amp;gotopage[1356]=1">...</a> is not clickable at point (357, 452). Other element would receive the click: <div class="data_listing_processing"></div>
-
         WebDriverWait wait1 = new WebDriverWait(driver, 5);
-        wait1.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@class=\"btn btn-default btn-xs purple\" and @title=\"Info\"]")));
-        WebElement foundTask = driver.findElement(By.xpath("//a[@class=\"btn btn-default btn-xs purple\" and @title=\"Info\"]"));
+        wait1.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(foundTaskXpath)));
+        WebElement foundTask = driver.findElement(By.xpath(foundTaskXpath));
         foundTask.sendKeys(Keys.RETURN);
 
     }
-
 
     public void deleteTask (String projectName, String taskName){
         //open task
@@ -135,6 +138,12 @@ public class TasksPage {
         WebDriverWait waitForDeleteButtonConfirm = new WebDriverWait(driver, 5);
         waitForDeleteButtonConfirm.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[@type=\"submit\" and @class=\"btn btn-primary btn-primary-modal-action\"]")));
         deleteButtonConfirm.click();
+        //Final assert
+
+        wait4.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"slimScroll\"]/table/tbody/tr/td")));
+        String noRecords = driver.findElement(By.xpath("//*[@id=\"slimScroll\"]/table/tbody/tr/td")).getText();
+        Assert.assertEquals("No Records Found",noRecords);
+
     }
 
     public void validateTask(String projectName, String taskName,String taskDescription,String taskType,String taskStatus,String taskPriority){
@@ -156,55 +165,79 @@ public class TasksPage {
         Assert.assertEquals(taskPriorityGet, "Priority\n"+taskPriority);
     }
 
-    public void checkTaskTableRecords (int Expected){
-
+    public void checkTaskTableRecords (int Expected, List<String> statusExpected){
+        //Pick a table with task and compare it's number of rows with value from input
         WebDriverWait wait4 = new WebDriverWait(driver, 5);
         wait4.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//tbody")));
         WebElement table = driver.findElement(By.xpath("//tbody"));
         List<WebElement> txt = table.findElements(By.tagName("tr"));
+        //Final assert of found number of rows and value form input
         Assert.assertEquals(Expected, txt.size());
+
+        //List fo comparasion crated
+        List<String> statusActual = new ArrayList<>();
+
+        //In this cycle, wich is running the same time as input table has rows, each iteration status is added to a list.
+        for (int i = 1; i < Expected+1; i++) {
+            String cell = driver.findElement(By.xpath("//table[@class=\"table table-striped table-bordered table-hover\"]/tbody/tr[" + i + "]/td[7]")).getText();
+            statusActual.add(cell);
+        }
+        //Finnaly two lists are compared.  One from input which is declared and filled in test directly and the other filled in cycle.
+        Assert.assertEquals(statusExpected,statusActual);
+
+
     }
+
     public void taskBulkDelete (String projectName){
+        //Go to project page
         WebDriverWait wait = new WebDriverWait(driver, 5);
         DashboardPage dashboardPage = PageFactory.initElements(driver, DashboardPage.class);
         dashboardPage.goToProjects();
 
+        //Open specific project
         ProjectsPage projectsPage = PageFactory.initElements(driver, ProjectsPage.class);
         projectsPage.searchProjects(projectName);
         projectsPage.openProject(projectName);
 
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id=\"uniform-select_all_items\"]")));
-        WebElement deleteAllTasks = driver.findElement(By.xpath("//div[@id=\"uniform-select_all_items\"]"));
+        //Click on bulk operation checkbox
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(bulkOperationsCheckbox)));
+        WebElement deleteAllTasks = driver.findElement(By.xpath(bulkOperationsCheckbox));
         deleteAllTasks.click();
 
+        //Click on specific bulk operation picker
         WebElement withSelected = driver.findElement(By.cssSelector("body>div.page-container>div.page-content-wrapper>div>div>div.row>div>div:nth-child(7)>div:nth-child(1)>div>div>button"));
         withSelected.click();
 
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("body>div.page-container>div.page-content-wrapper>div>div>div.row>div>div:nth-child(7)>div:nth-child(1)>div>div>ul>li:nth-child(2)>a")));
-        WebElement deleteBulk = driver.findElement(By.cssSelector("body>div.page-container>div.page-content-wrapper>div>div>div.row>div>div:nth-child(7)>div:nth-child(1)>div>div>ul>li:nth-child(2)>a"));
+        //Pick bulk delete
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(bulkDelete)));
+        WebElement deleteBulk = driver.findElement(By.cssSelector(bulkDelete));
         deleteBulk.click();
 
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"delete_selected_form\"]/div[2]/button[1]")));
-        WebElement confirmDeleteBulk = driver.findElement(By.xpath(" //*[@id=\"delete_selected_form\"]/div[2]/button[1]"));
+        //Confirm delete in modal
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(confirmDelete)));
+        WebElement confirmDeleteBulk = driver.findElement(By.xpath(confirmDelete));
         confirmDeleteBulk.click();
     }
 
     public void defaultFilters(String projectName){
+        //Go to projects page
         DashboardPage dashboardPage = PageFactory.initElements(driver, DashboardPage.class);
         dashboardPage.goToProjects();
 
+        //Open a specific project
         ProjectsPage projectsPage = PageFactory.initElements(driver, ProjectsPage.class);
-        projectsPage.searchProjects(projectName);
         projectsPage.openProject(projectName);
 
+        //Click on filter picker
         WebDriverWait wait = new WebDriverWait(driver, 5);
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("/html/body/div[3]/div[2]/div/div/div[2]/div/div[2]/div[1]/div[1]/div[1]/button")));
-        WebElement filterButton = driver.findElement(By.xpath("/html/body/div[3]/div[2]/div/div/div[2]/div/div[2]/div[1]/div[1]/div[1]/button"));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(filterPicker)));
+        WebElement filterButton = driver.findElement(By.xpath(filterPicker));
         filterButton.click();
 
+        //Pick default filters
         WebDriverWait wait7 = new WebDriverWait(driver, 10);
-        wait7.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[contains(@href,'users_filters&action=use&id=default')]")));
-        WebElement getFilters = driver.findElement(By.xpath("//a[contains(@href,'users_filters&action=use&id=default')]"));
+        wait7.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(defaultFilters)));
+        WebElement getFilters = driver.findElement(By.xpath(defaultFilters));
         getFilters.click();
     }
 
